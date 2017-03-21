@@ -2,7 +2,7 @@
 Servo thruster;
 
 // Pinout declaration
-#define thrusterPort 12
+#define thrusterPort 1
 
 #define buttonLv1	 8
 #define buttonLv2	 9
@@ -16,6 +16,9 @@ Servo thruster;
 #define ledLampYellow 5
 #define ledLampRed2 6
 #define ledLampWhite 7
+#define ledLampThrustYellow 11
+#define ledLampThrustGreen 12
+#define ledLampThrustBlue 13
 
 
 // Variable declaration
@@ -31,7 +34,7 @@ int speedLevel4 = 1820; // Med-Max
 int speedLevel5 = 1900; // Maximum
 int speedLevelStop = 1500; // Stop
 
-// Thruster values
+// Thruster default values
 int delayTime = 100;
 int currentSpeed = 1500;
 int newSpeed = 1500;
@@ -64,6 +67,9 @@ void setup()
 	pinMode(ledLampYellow, OUTPUT);
 	pinMode(ledLampRed2, OUTPUT);
 	pinMode(ledLampWhite, OUTPUT);
+	pinMode(ledLampThrustYellow, OUTPUT);
+	pinMode(ledLampThrustGreen, OUTPUT);
+	pinMode(ledLampThrustBlue, OUTPUT);
 
 	pinMode(buttonLv1, INPUT_PULLUP);
 	pinMode(buttonLv2, INPUT_PULLUP);
@@ -75,11 +81,12 @@ void setup()
 	delay(1000);					  // delay to allow the ESC to recognize the stopped signal
 
 
-	Serial.begin(19200);		      // Serial debugger begins at 9600bps
+	//Serial.begin(9600);		      // Serial debugger begins at 9600bps
 }
 
 void loop()
 {
+	TurnOfLight();
 	ButtonRead();
 	Accelerate();
 }
@@ -97,65 +104,58 @@ void ButtonRead() {
 	//////////////////////////  then last check individuals
 	//////////////////////////
 
-
-	// Check which buttons is pressed
-
-	TurnOfLight();
-	if (buttonVal1)
-	{
-		newSpeed = speedLevel1; //Button 1 is pressed set new acceleration value;
-		digitalWrite(ledLampRed1, HIGH);
-	}
-
-	if (buttonVal2)
-	{
-		newSpeed = speedLevel3; //Button 2 is pressed set new acceleration value;
-		digitalWrite(ledLampBlue, HIGH);
-	}
-
-	if (buttonVal1 && buttonVal2)
-	{
-		newSpeed = speedLevel2; //Button 1 and 2 is pressed set new acceleration value;
-		digitalWrite(ledLampGreen, HIGH);
-
-	}
-
-	if (buttonVal3)
-	{
-		newSpeed = speedLevel5; //Button 3 is pressed set new acceleration value;
-		digitalWrite(ledLampRed2, HIGH);
-
-	}
-
-	if (buttonVal3 && buttonVal2)
-	{
-		newSpeed = speedLevel4; //Button 3 and 4 is pressed set new acceleration value;
-		digitalWrite(ledLampYellow, HIGH);
-
-	}
-
-	if (buttonVal1 && buttonVal2 && buttonVal3)
-	{
-		newSpeed = speedLevel3; // All buttons is pressed
-	}
-
-	if (!buttonVal1 && !buttonVal2 && !buttonVal3)
-	{
-		currentSpeed = 1500;
-		newSpeed = currentSpeed; // No buttons is pressed
-		thruster.writeMicroseconds(currentSpeed);
-		digitalWrite(ledLampWhite, HIGH);
-
-	}
-
-
 	// Print values in debugger
-	Serial.print("Button val1: ");
+	/*Serial.print("Button val1: ");
 	Serial.print(buttonVal1);
 	Serial.print(" val2: ");
 	Serial.print(buttonVal2);
 	Serial.print(" val3: ");
-	Serial.println(buttonVal3);
+	Serial.println(buttonVal3);*/
+
+
+	// Check which buttons is pressed?
+
+	// Put values into arrays for easy enumrations in loops
+	int ledLampsArray[]{ 2,3,4,5,6,7 };
+	int speedLevelArray[]{ speedLevel1,speedLevel2, speedLevel3, speedLevel4, speedLevel5 };
+	bool buttonValArray[]{ buttonVal1,buttonVal2,buttonVal3 };
+
+	if (!buttonVal1 && !buttonVal2 && !buttonVal3)
+	{
+		currentSpeed = 1500;		// No buttons is pressed
+		newSpeed = currentSpeed;	// STOP
+		thruster.writeMicroseconds(currentSpeed);
+		digitalWrite(ledLampsArray[5], HIGH);
+		return;
+	}
+
+	for (size_t i = 0; i < sizeof(buttonValArray); i++)
+	{
+		if (i < (sizeof(buttonValArray) - 1))
+		{
+			if (buttonValArray[i] && buttonValArray[i + 1])
+			{
+				if (buttonValArray[0] && buttonValArray[1])
+				{
+					newSpeed = speedLevelArray[i+1]; 
+					digitalWrite(ledLampsArray[i+1], HIGH);
+					return;
+				}
+				else
+				{
+					newSpeed = speedLevelArray[i+2]; 
+					digitalWrite(ledLampsArray[i+2], HIGH);
+					return;
+				}
+			}
+		}
+		if (buttonValArray[i])
+		{
+			newSpeed = speedLevelArray[i*2];
+			digitalWrite(ledLampsArray[i*2], HIGH);
+			return;
+		}
+	}
 }
 
 
@@ -167,26 +167,30 @@ bool Accelerate() {
 	{
 		if (newSpeed < currentSpeed)  // Lower speedValue
 		{
-
-
 			currentSpeed -= 1;
+			delayTime = 1;
 			thruster.writeMicroseconds(currentSpeed);
-			delayTime = 100;
+			digitalWrite(ledLampThrustYellow, HIGH);
+			digitalWrite(ledLampThrustGreen, LOW);
+			digitalWrite(ledLampThrustBlue, LOW);
 		}
 		else if (newSpeed > currentSpeed) // Higher speedValue
 		{
-
-
 			currentSpeed += 1;
-			delayTime = 250;
+			delayTime = 5;
 			thruster.writeMicroseconds(currentSpeed);
+			digitalWrite(ledLampThrustYellow, LOW);
+			digitalWrite(ledLampThrustGreen, LOW);
+			digitalWrite(ledLampThrustBlue, HIGH);
 		}
 		else
 		{
-
-
 			newSpeed == currentSpeed;
 			thruster.writeMicroseconds(currentSpeed);
+			digitalWrite(ledLampThrustYellow, LOW);
+			digitalWrite(ledLampThrustGreen, HIGH);
+			digitalWrite(ledLampThrustBlue, LOW);
+
 		}
 		timerThruster = millis();
 	}
