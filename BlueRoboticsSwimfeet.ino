@@ -60,6 +60,7 @@ void setup()
 	// Pinout usage declaration 
 	thruster.attach(thrusterPort);
 
+	// Led lamps & joystick for debugging
 	pinMode(joystickPort, INPUT);
 	pinMode(ledLampRed1, OUTPUT);
 	pinMode(ledLampGreen, OUTPUT);
@@ -204,18 +205,4 @@ void TurnOfLight() {
 	digitalWrite(ledLampWhite, LOW);
 	digitalWrite(ledLampYellow, LOW);
 	digitalWrite(ledLampGreen, LOW);
-}
-
-// Prototyping
-void JoystickReader() {
-
-
-	int joystickVal = analogRead(joystickPort);			        // Read joystick
-
-	joystickVal = constrain(joystickVal, 512, 1023);		// Constrain joystick value
-
-	int newVal = map(joystickVal, 512, 1023, 1500, 1900);   // map value from 512-1023 to 1500-1900
-
-	thruster.writeMicroseconds(newVal);					    // Send signal to ESC.
-
 }
