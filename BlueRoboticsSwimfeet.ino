@@ -169,7 +169,7 @@ bool Accelerate() {
 		if (newSpeed < currentSpeed)  // Lower speedValue
 		{
 			currentSpeed -= 1;
-			delayTime = 1;
+			delayTime = 2;
 			thruster.writeMicroseconds(currentSpeed);
 			digitalWrite(ledLampThrustYellow, HIGH);
 			digitalWrite(ledLampThrustGreen, LOW);
