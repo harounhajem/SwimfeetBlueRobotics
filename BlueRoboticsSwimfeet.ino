@@ -1,24 +1,14 @@
 #include <Servo.h>
-Servo thruster;
+Servo thrusterRight;
+Servo thrusterLeft;
 
 // Pinout declaration
-#define thrusterPort 1
+#define thrusterRightPort 9
+#define thrusterLeftPort 10
+#define buttonLv1	 5
+#define buttonLv2	 6
+#define buttonLv3	 7
 
-#define buttonLv1	 8
-#define buttonLv2	 9
-#define buttonLv3	 10
-
-#define joystickPort 14
-
-#define ledLampRed1	 2
-#define ledLampGreen 3
-#define ledLampBlue 4
-#define ledLampYellow 5
-#define ledLampRed2 6
-#define ledLampWhite 7
-#define ledLampThrustYellow 11
-#define ledLampThrustGreen 12
-#define ledLampThrustBlue 13
 
 
 // Variable declaration
@@ -58,27 +48,16 @@ void setup()
 
 
 	// Pinout usage declaration 
-	thruster.attach(thrusterPort);
-
-	// Led lamps & joystick for debugging
-	pinMode(joystickPort, INPUT);
-	pinMode(ledLampRed1, OUTPUT);
-	pinMode(ledLampGreen, OUTPUT);
-	pinMode(ledLampBlue, OUTPUT);
-	pinMode(ledLampYellow, OUTPUT);
-	pinMode(ledLampRed2, OUTPUT);
-	pinMode(ledLampWhite, OUTPUT);
-	pinMode(ledLampThrustYellow, OUTPUT);
-	pinMode(ledLampThrustGreen, OUTPUT);
-	pinMode(ledLampThrustBlue, OUTPUT);
-
+	thrusterRight.attach(thrusterRightPort);
+	thrusterLeft.attach(thrusterLeftPort);
 	pinMode(buttonLv1, INPUT_PULLUP);
 	pinMode(buttonLv2, INPUT_PULLUP);
 	pinMode(buttonLv3, INPUT_PULLUP);
 
 
 	// Thruster activate
-	thruster.writeMicroseconds(1500); // send "stop" signal to ESC.
+	thrusterRight.writeMicroseconds(1500); // send "stop" signal to ESC.
+	thrusterLeft.writeMicroseconds(1500); // send "stop" signal to ESC.
 	delay(1000);					  // delay to allow the ESC to recognize the stopped signal
 
 
@@ -87,7 +66,6 @@ void setup()
 
 void loop()
 {
-	TurnOfLight();
 	ButtonRead();
 	Accelerate();
 }
@@ -125,7 +103,7 @@ void ButtonRead() {
 	{
 		currentSpeed = 1500;		// No buttons is pressed
 		newSpeed = currentSpeed;	// STOP
-		thruster.writeMicroseconds(currentSpeed);
+		thrusterRight.writeMicroseconds(currentSpeed);
 		digitalWrite(ledLampsArray[5], HIGH);
 		return;
 	}
@@ -170,39 +148,23 @@ bool Accelerate() {
 		{
 			currentSpeed -= 1;
 			delayTime = 2;
-			thruster.writeMicroseconds(currentSpeed);
-			digitalWrite(ledLampThrustYellow, HIGH);
-			digitalWrite(ledLampThrustGreen, LOW);
-			digitalWrite(ledLampThrustBlue, LOW);
+			thrusterRight.writeMicroseconds(currentSpeed);
+			thrusterLeft.writeMicroseconds(currentSpeed);
 		}
 		else if (newSpeed > currentSpeed) // Higher speedValue
 		{
 			currentSpeed += 1;
 			delayTime = 5;
-			thruster.writeMicroseconds(currentSpeed);
-			digitalWrite(ledLampThrustYellow, LOW);
-			digitalWrite(ledLampThrustGreen, LOW);
-			digitalWrite(ledLampThrustBlue, HIGH);
+			thrusterRight.writeMicroseconds(currentSpeed);
+			thrusterLeft.writeMicroseconds(currentSpeed);
 		}
 		else
 		{
 			newSpeed == currentSpeed;
-			thruster.writeMicroseconds(currentSpeed);
-			digitalWrite(ledLampThrustYellow, LOW);
-			digitalWrite(ledLampThrustGreen, HIGH);
-			digitalWrite(ledLampThrustBlue, LOW);
-
+			thrusterRight.writeMicroseconds(currentSpeed);
+			thrusterLeft.writeMicroseconds(currentSpeed);
 		}
 		timerThruster = millis();
 	}
 }
 
-
-void TurnOfLight() {
-	digitalWrite(ledLampRed1, LOW);
-	digitalWrite(ledLampRed2, LOW);
-	digitalWrite(ledLampBlue, LOW);
-	digitalWrite(ledLampWhite, LOW);
-	digitalWrite(ledLampYellow, LOW);
-	digitalWrite(ledLampGreen, LOW);
-}
