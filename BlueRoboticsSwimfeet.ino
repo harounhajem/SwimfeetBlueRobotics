@@ -9,8 +9,6 @@ Servo thrusterLeft;
 #define buttonLv2	 6
 #define buttonLv3	 7
 
-
-
 // Variable declaration
 bool buttonVal1 = false;
 bool buttonVal2 = false;
@@ -34,7 +32,7 @@ unsigned long timerThruster = 0;
 void setup()
 {
 
-#pragma region Thruster instructions
+        #pragma region Thruster instructions
 	/*
 
 	Thruster communication:
@@ -44,7 +42,7 @@ void setup()
 	Max reverse 	1100 microseconds
 
 	*/
-#pragma endregion
+        #pragma endregion
 
 	
 	// Pinout usage declaration 
@@ -91,7 +89,6 @@ void ButtonRead() {
 	// Check which buttons is pressed?
 
 	// Put values into arrays for easy enumrations in loops
-	int ledLampsArray[]{ 2,3,4,5,6,7 };
 	int speedLevelArray[]{ speedLevel1,speedLevel2, speedLevel3, speedLevel4, speedLevel5 };
 	bool buttonValArray[]{ buttonVal1,buttonVal2,buttonVal3 };
 
@@ -100,7 +97,6 @@ void ButtonRead() {
 		currentSpeed = 1500;		// No buttons is pressed
 		newSpeed = currentSpeed;	// STOP
 		thrusterRight.writeMicroseconds(currentSpeed);
-		digitalWrite(ledLampsArray[5], HIGH);
 		return;
 	}
 
@@ -113,13 +109,11 @@ void ButtonRead() {
 				if (buttonValArray[0] && buttonValArray[1])
 				{
 					newSpeed = speedLevelArray[i+1]; 
-					digitalWrite(ledLampsArray[i+1], HIGH);
 					return;
 				}
 				else
 				{
 					newSpeed = speedLevelArray[i+2]; 
-					digitalWrite(ledLampsArray[i+2], HIGH);
 					return;
 				}
 			}
@@ -127,7 +121,6 @@ void ButtonRead() {
 		if (buttonValArray[i])
 		{
 			newSpeed = speedLevelArray[i*2];
-			digitalWrite(ledLampsArray[i*2], HIGH);
 			return;
 		}
 	}
