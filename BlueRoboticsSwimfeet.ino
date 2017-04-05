@@ -38,8 +38,8 @@ void setup()
 	/*
 
 	Thruster communication:
-	COMMAND:		MICROSECOND
-	Stopped 	    1500 microseconds
+	COMMANDS        MICROSECOND
+	Stopped 	1500 microseconds
 	Max forward 	1900 microseconds
 	Max reverse 	1100 microseconds
 
@@ -56,11 +56,10 @@ void setup()
 
 				 
 	// Thruster activate
-	delay(3250);
+	delay(3250);				// wait time for ESC to boot up
 	thrusterRight.writeMicroseconds(1500); // send "stop" signal to ESC.
 	thrusterLeft.writeMicroseconds(1500); // send "stop" signal to ESC.
-	delay(1500);					     // delay to allow the ESC to recognize the stopped signal
-
+	delay(1500);	    		     // delay to allow the ESC to recognize the stopped signal
 
 	//Serial.begin(9600);		      // Serial debugger, activate this for debug.
 }
