@@ -46,7 +46,7 @@ void setup()
 	*/
 #pragma endregion
 
-
+	
 	// Pinout usage declaration 
 	thrusterRight.attach(thrusterRightPort);
 	thrusterLeft.attach(thrusterLeftPort);
@@ -54,11 +54,12 @@ void setup()
 	pinMode(buttonLv2, INPUT_PULLUP);
 	pinMode(buttonLv3, INPUT_PULLUP);
 
-
+				 
 	// Thruster activate
+	delay(3250);
 	thrusterRight.writeMicroseconds(1500); // send "stop" signal to ESC.
 	thrusterLeft.writeMicroseconds(1500); // send "stop" signal to ESC.
-	delay(1000);					  // delay to allow the ESC to recognize the stopped signal
+	delay(1500);					     // delay to allow the ESC to recognize the stopped signal
 
 
 	//Serial.begin(9600);		      // Serial debugger begins at 9600bps
@@ -83,13 +84,13 @@ void ButtonRead() {
 	//////////////////////////  then last check individuals
 	//////////////////////////
 
-	// Print values in debugger
-	/*Serial.print("Button val1: ");
-	Serial.print(buttonVal1);
-	Serial.print(" val2: ");
-	Serial.print(buttonVal2);
-	Serial.print(" val3: ");
-	Serial.println(buttonVal3);*/
+	//// Print values in debugger
+	//Serial.print("Button val1: ");
+	//Serial.print(buttonVal1);
+	//Serial.print(" val2: ");
+	//Serial.print(buttonVal2);
+	//Serial.print(" val3: ");
+	//Serial.println(buttonVal3);
 
 
 	// Check which buttons is pressed?
@@ -165,6 +166,8 @@ bool Accelerate() {
 			thrusterLeft.writeMicroseconds(currentSpeed);
 		}
 		timerThruster = millis();
+		Serial.print("newSpeed: ");
+		Serial.println(newSpeed);
 	}
 }
 
