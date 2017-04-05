@@ -62,7 +62,7 @@ void setup()
 	delay(1500);					     // delay to allow the ESC to recognize the stopped signal
 
 
-	//Serial.begin(9600);		      // Serial debugger begins at 9600bps
+	//Serial.begin(9600);		      // Serial debugger, activate this for debug.
 }
 
 void loop()
@@ -79,10 +79,6 @@ void ButtonRead() {
 	buttonVal2 = digitalRead(buttonLv2);
 	buttonVal3 = digitalRead(buttonLv3);
 
-	//////////////////////////  TODO: 
-	//////////////////////////  Turn around the "if statements" and insert return ex. Check three buttons first, check two button,
-	//////////////////////////  then last check individuals
-	//////////////////////////
 
 	//// Print values in debugger
 	//Serial.print("Button val1: ");
@@ -166,8 +162,6 @@ bool Accelerate() {
 			thrusterLeft.writeMicroseconds(currentSpeed);
 		}
 		timerThruster = millis();
-		Serial.print("newSpeed: ");
-		Serial.println(newSpeed);
 	}
 }
 
